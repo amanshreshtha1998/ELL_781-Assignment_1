@@ -6,18 +6,25 @@ int main()
 
 	my_heap = make_fib_heap();
 
-	insert(my_heap,10);
+	insert(my_heap , 7);
 
-	insert(my_heap,30);
+	insert(my_heap , 18);
 
-	insert(my_heap,5);
+	insert(my_heap , 38);
 
-	insert(my_heap,20);
+	print_heap(my_heap);
 
-	NODE * min_node;
+	NODE * dummy = create_dummy_node(24);
 
-	min_node = find_min(my_heap);
-	printf("Minimum vaue in the heap is: %d\n",min_node->key);
+	NODE * node = find_node(my_heap->min , 7 );
+	printf("%d\n",node->key);
+
+	node->child = dummy;
+	dummy->parent = node;
+
+	decrease_key(my_heap , 24 , 6);
+
+	print_heap(my_heap);
 
 	return 0;
 }
