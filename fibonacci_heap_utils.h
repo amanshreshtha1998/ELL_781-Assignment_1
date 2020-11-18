@@ -29,16 +29,10 @@ typedef struct heap
 }HEAP;
 
 
-HEAP * make_fib_heap();
-void insert( HEAP * H , int val );
-NODE * find_min( HEAP * H );
-void print_heap(HEAP * H);
-NODE * find_node( NODE * H_min , int node_val );
-void decrease_key( HEAP * H , int curr_val , int dec_val );
-void CUT( HEAP * H , NODE * x , NODE * y );
-void CASCADING_CUT( HEAP * H , NODE * y );
+HEAP * make_fib_heap(); // correct
+void insert( HEAP * H , int val ); // correct
+NODE * find_min( HEAP * H ); // correct
 
-// remove this function 
 NODE * create_dummy_node(int val)
 {
 	NODE * new_node;
@@ -53,7 +47,7 @@ NODE * create_dummy_node(int val)
 
 	new_node->degree = 0;
 	new_node->mark = 'F';
-	new_node->C = 'N';  
+	new_node->C = 'N'; 
 
 	return new_node;
 }
@@ -137,160 +131,160 @@ NODE * find_min( HEAP * H )
 	return H->min;
 }
 
-void print_heap(HEAP * H)
+void print_heap(NODE * H_min)
 {
-	NODE * p = H->min;
+	NODE * ptr = H_min;
 
-	if( p == NULL )
-	{
-		printf("The heap is empty !\n");
-		return;
-	}
+	ptr->C = 'Y';
 
-	// printing the root nodes
+	printf(" %d --> ",ptr->key);
 
-	printf(" %d ",p->key);
+		if( ptr->child != NULL )
+		{
+			print_heap(ptr->child);
+		}
 
-	p = p->right;
+		if( (ptr->right)->C != 'Y' )
+		{
+			print_heap(ptr->right);
+		}
 
-	while( p != H->min )
-	{
-		printf("--> %d ",p->key);
-		
-		p = p->right;
-	}
-
-	printf("\n");
-
-	printf("There are total %d elements in the fibonacci heap\n",H->n);
+	ptr->C = 'N';
 
 }
 
-NODE * find_node( NODE * H_min , int node_val )
-// returns the pointer to the node having value as node_val
+NODE * find_node(NODE * H_min , int val)
 {
-	NODE * curr_node = H_min;
+	NODE * ptr = H_min;
 
-	curr_node->C = 'Y';
+	//printf("The value of node is: %d\n",ptr->key);
 
-	if( curr_node->key == node_val )
+	ptr->C = 'Y';
+
+	NODE * x = NULL;
+
+	if( ptr->key == val )
 	{
-		curr_node->C = 'N';
-		return curr_node;
+		//printf("The found node is: %d\n",ptr->key);
+		x = ptr;
+		ptr->C = 'N';
+		return x;
 	}
 
-	NODE * x = (NODE*)NULL;
-
-	if( curr_node->child != NULL )
+	if( x == NULL )
 	{
-		x = find_node(curr_node->child,node_val);
+		if( ptr->child != NULL )
+		{
+			x = find_node(ptr->child,val);
+		}
+
+		if( (ptr->right)->C != 'Y' && x == NULL )
+		{
+			x = find_node(ptr->right,val);
+		}
 	}
 
-	if( ( curr_node->right )->C != 'Y' )
-	{
-		x = find_node(curr_node->right,node_val);
-	}
-
-	curr_node->C = 'N';
-
+	ptr->C = 'N';
 	return x;
-
 }
 
-void decrease_key( HEAP * H , int curr_val , int dec_val )
+void CUT( NODE* H_min , NODE * x , NODE * y )
 {
-	NODE * p = H->min;
-
-	if( p == NULL)
+	if( x == x->right )
 	{
-		printf("Error ! , The given heap is empty. \n");
-		return;
+		y->child = NULL;
 	}
 
-	NODE * found_node = NULL;
-	found_node = find_node(p , curr_val);
-
-	if( found_node == NULL )
-	{
-		printf(" Node with given value not present in the heap ! \n");
-		return;
-	}
-
-	if( found_node->key < dec_val )
-	{
-		printf("Error ! , New key is greater than the current key ! \n");
-		return;
-	}
-
-	found_node->key = dec_val;
-
-	
-	NODE * parent = found_node->parent;
-
-	if( parent != NULL && found_node->key < parent->key )
-	{
-		CUT( H , found_node , parent );
-		CASCADING_CUT( H , parent );
-	}
-
-	if( found_node->key < p->key )
-	{
-		H->min = found_node; 
-	} 
-
-	return;
-}
-
-void CUT( HEAP * H , NODE * x , NODE * y )
-{
-
-	// remove x from child list of y
-	if( x == x-> right )  // x is the only child of y
-	{
-		y->child = NULL; // now y has no children
-	}
 	else{
-		
+
 		y->child = x->right;
 
-		( x->left )->right = x->right;
-		( x->right )->left = x->left;
+		(x->left)->right = x->right;
+		(x->right)->left = x->left;
+
 	}
+
+	/*(x->left)->right = x->right;
+	(x->right)->left = x->left;
+
+	if(x == y->child)
+	{
+		y->child = x->right;
+	}*/
+
+	y->degree = y->degree-1;
 
 	x->right = x;
 	x->left = x;
 
-	(y->degree)--;
-
-	// add x to the root list
-
-	( ( H->min ) -> left ) -> right = x;
-
-	x->right = H->min;
-
-	x->left = (H->min)->left;
-
-    (H->min)->left = x;
+	(H_min->left)->right = x;
+	x->right = H_min;
+	x->left = (H_min->left);
+	H_min->left = x;
 
 	x->parent = NULL;
 	x->mark = 'F';
+
+	printf("Node of value = %d added to the root list\n",x->key);
 }
 
-void CASCADING_CUT( HEAP * H , NODE * y )
+void CASCADING_CUT(NODE * H_min , NODE * y)
 {
-	NODE * z = y->parent;
+	NODE* z = y->parent;
 
-	if( z != NULL )
+	if(z != NULL)
 	{
-		if( y->mark == 'F' )
+		if(y->mark == 'F')
 		{
 			y->mark = 'T';
 		}
 		else{
 
-			CUT( H , y , z );
-			CASCADING_CUT( H , z );
+			CUT(H_min,y,z);
+			CASCADING_CUT(H_min,z);
 		}
 	}
-
 }
+
+void decrease_key(HEAP * H , int curr_val , int dec_val)
+{
+	NODE * H_min = H->min;
+
+	if(H_min == NULL)
+	{
+		printf("Error!, The heap is empty\n");
+		return;
+	}
+
+	NODE * found_node = find_node(H_min , curr_val);
+
+	if( found_node == NULL )
+	{
+		printf("Error!, Node not found\n");
+		return;
+	}
+
+	if( found_node->key < dec_val )
+	{
+		printf("Error!, the new value is greater than previous value.\n");
+		return;
+	}
+
+	NODE * parent = found_node->parent;
+
+	found_node->key = dec_val;	
+
+	if( parent != NULL && found_node->key < parent->key )
+	{
+		CUT(H_min , found_node , parent);
+		CASCADING_CUT(H_min , parent);
+	}
+
+	
+	if(found_node->key < H->min->key)
+	{
+		H->min = found_node;
+	}
+	return;
+}
+
