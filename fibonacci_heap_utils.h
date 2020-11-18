@@ -32,6 +32,10 @@ typedef struct heap
 HEAP * make_fib_heap(); // correct
 void insert( HEAP * H , int val ); // correct
 NODE * find_min( HEAP * H ); // correct
+void consolidate (HEAP * H);
+void link_heaps(HEAP *H, NODE *x,NODE *y);
+void add_node(NODE *exist, NODE *new);
+int degree(int n);
 
 NODE * create_dummy_node(int val)
 {
@@ -117,6 +121,112 @@ void insert( HEAP * H , int val )  // insert a new node in the fib_heap with val
 
     return;
 }
+
+void consolidate (HEAP * H)
+{
+//int n = 8;
+int i;
+int dMax,d;
+//NODE *a[dMax], *x,*y,*temp;
+dMax = degree(H->n);
+
+//dMax = (int) floor (log(H->n)/log(2));
+NODE *a[4], *x,*y,*temp;
+printf("max degree of a node in H is= %d ", dMax);
+
+a = (NODE *) malloc(dMax * sizeof(NODE *)); //auxillary array 
+for (i=0;i <= dMax;i++)
+{a[i]= (NODE *) NULL;}
+
+x=H->min;
+do{
+d=x->degree ;
+
+while(a[d]!=NULL)
+{
+y = a[d];
+
+if (x->key > y->key)
+
+{temp = x;   /*exchange x and y*/
+x = y;
+y = temp;}
+
+link_heaps (H,x,y);
+
+a[d] = (NODE *)NULL;
+d = d+1;
+}
+a[d] = x;    //a[d] is node having degree d
+x = x->right;
+
+}while(x != H->min);
+
+H->min = (NODE *)NULL;
+
+for (i=0;i<=dMax;i++)
+ 
+{ // checking a[i]
+if (*(a+i) != (NODE *)NULL)
+
+{ //adding a[i] to the root list
+a[i] -> right = a[i];
+a[i] -> left = a[i];
+
+if(H->min == (NODE *)NULL)
+{H->min = a[i];}
+else
+
+add_node(H->min, a[i]);
+/*( H->min -> left ) -> right = a[i];
+a[i]->right = H->min;
+a[i]->left = (H->min)->left;
+(H->min)->left = a[i];
+*/
+
+if((H->min = (NODE *)NULL) || (a[i]->key < H->min->key))
+H->min = a[i]; //updating H->min
+
+}//adding a[i] to the root list
+}// checking a[i]
+
+void link_heaps(HEAP *H, NODE *x , NODE *y)
+{   y->right->left = y->left; //removing y from root list
+    y->left->right = y->right;
+
+    y->parent = x;
+    y->left = y;
+    y->right =y;
+
+    //making y the child of x
+   if(x->child == NULL) 
+   {
+       x->child = y; 
+   }
+   else
+       add_node(x->child, y);  //look
+    
+    x->degree = x->degree + 1;
+    y->mark = 'F';
+}
+
+void add_node(NODE *exist, *new)
+{
+	NODE *exist, *new;
+    (exist -> left ) -> right = new;
+    new->right = exist ;
+    new->left = exist->left;
+    (exist->left = new;
+}
+
+int degree(int n)
+{int deg=0;
+while(n>0)
+{n=n/2;
+deg++;}
+return deg
+}
+
 
 
 NODE * find_min( HEAP * H )
