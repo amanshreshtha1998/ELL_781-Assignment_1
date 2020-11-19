@@ -131,26 +131,31 @@ int dMax,d;
 dMax = degree(H->n);
 
 //dMax = (int) floor (log(H->n)/log(2));
-NODE *a[4], *x,*y,*temp;
-printf("max degree of a node in H is= %d ", dMax);
+NODE *a[dMax], *x,*y,*temp;
+printf("max degree of a node in H is = %d \n", (dMax-1));
 
-a = (NODE *) malloc(dMax * sizeof(NODE *)); //auxillary array 
-for (i=0;i <= dMax;i++)
-{a[i]= (NODE *) NULL;}
+//a[0] = (NODE *) malloc(4 * sizeof(NODE *)); //auxillary array 
+for (i=0;i <dMax; i++)
+	a[i]= (NODE *) NULL;
+
 
 x=H->min;
-do{
-d=x->degree ;
 
+do{
+printf ("visiting node (val = %d) \n", x->key);
+d=x->degree ;
+printf ("degree of node (val = %d) is (d = %d) \n", x->key, d);
 while(a[d]!=NULL)
 {
-y = a[d];
+y = a[d];     
+printf ("found node with same degree(%d) having (val = %d) \n",d, y->key);
 
 if (x->key > y->key)
 
 {temp = x;   /*exchange x and y*/
 x = y;
-y = temp;}
+y = temp;
+}
 
 link_heaps (H,x,y);
 
@@ -161,6 +166,7 @@ a[d] = x;    //a[d] is node having degree d
 x = x->right;
 
 }while(x != H->min);
+printf ("visited all nodes in the root list \n");
 
 H->min = (NODE *)NULL;
 
@@ -174,7 +180,8 @@ a[i] -> right = a[i];
 a[i] -> left = a[i];
 
 if(H->min == (NODE *)NULL)
-{H->min = a[i];}
+{H->min = a[i];
+printf ("adding node (val = %d) to root list \n", a[i]->key);}
 else
 
 add_node(H->min, a[i]);
@@ -186,14 +193,15 @@ a[i]->left = (H->min)->left;
 
 if((H->min = (NODE *)NULL) || (a[i]->key < H->min->key))
 H->min = a[i]; //updating H->min
-
+printf ("value of updated H->min node is %d \n", H->min->key);
 }//adding a[i] to the root list
 }// checking a[i]
+}
 
 void link_heaps(HEAP *H, NODE *x , NODE *y)
 {   y->right->left = y->left; //removing y from root list
     y->left->right = y->right;
-
+    printf ("node (val = %d) removed from the root list \n", y->key);
     y->parent = x;
     y->left = y;
     y->right =y;
@@ -202,21 +210,23 @@ void link_heaps(HEAP *H, NODE *x , NODE *y)
    if(x->child == NULL) 
    {
        x->child = y; 
+	   printf ("y(%d) is now child of x(%d) \n",y->key, x->key);
    }
    else
-       add_node(x->child, y);  //look
-    
+       {add_node(x->child, y);  //look
+       printf ("y(%d) is added to child list of x(%d) \n",y->key, x->key);}
     x->degree = x->degree + 1;
     y->mark = 'F';
 }
 
-void add_node(NODE *exist, *new)
+void add_node(NODE *exist, NODE *new)
 {
-	NODE *exist, *new;
     (exist -> left ) -> right = new;
     new->right = exist ;
     new->left = exist->left;
-    (exist->left = new;
+    exist->left = new;
+	
+
 }
 
 int degree(int n)
@@ -224,12 +234,12 @@ int degree(int n)
 while(n>0)
 {n=n/2;
 deg++;}
-return deg
+return deg;
 }
 
 
 
-NODE * find_min( HEAP * H )
+/*NODE * find_min( HEAP * H )
 {
 	if( H->min == NULL )
 	{
@@ -239,7 +249,7 @@ NODE * find_min( HEAP * H )
 
 	printf("Returning the minimum node !\n");
 	return H->min;
-}
+}*/
 
 void print_heap(NODE * H_min)
 {
@@ -297,7 +307,7 @@ NODE * find_node(NODE * H_min , int val)
 	ptr->C = 'N';
 	return x;
 }
-
+/*
 void CUT( NODE* H_min , NODE * x , NODE * y )
 {
 	if( x == x->right )
@@ -312,7 +322,7 @@ void CUT( NODE* H_min , NODE * x , NODE * y )
 		(x->left)->right = x->right;
 		(x->right)->left = x->left;
 
-	}
+	}*/
 
 	/*(x->left)->right = x->right;
 	(x->right)->left = x->left;
@@ -321,7 +331,7 @@ void CUT( NODE* H_min , NODE * x , NODE * y )
 	{
 		y->child = x->right;
 	}*/
-
+    /*
 	y->degree = y->degree-1;
 
 	x->right = x;
@@ -396,5 +406,5 @@ void decrease_key(HEAP * H , int curr_val , int dec_val)
 		H->min = found_node;
 	}
 	return;
-}
+}*/
 
