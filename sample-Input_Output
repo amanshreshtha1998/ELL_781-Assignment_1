@@ -1,0 +1,42 @@
+Making a new fibonacci heap !
+Enter number of root list elements.
+6
+3
+Adding the first node ( val = 3 ) to an empty fibonacci heap !
+7
+Adding a new node ( val = 7 ) to the fibonacci heap in the root list !
+23
+Adding a new node ( val = 23 ) to the fibonacci heap in the root list !
+21
+Adding a new node ( val = 21 ) to the fibonacci heap in the root list !
+17
+Adding a new node ( val = 17 ) to the fibonacci heap in the root list !
+24
+Adding a new node ( val = 24 ) to the fibonacci heap in the root list !
+Enter number of non-root list elements. 
+9
+3 0 18 T
+18 0 39 T
+18 1 52 F
+52 1 38 F
+38 0 41 f
+17 0 30 F
+24 0 26 T
+26 1 46 F
+26 0 35 F
+15 3 { degree: 3 , mark: F , visited : 1 }
+ [child of 3]  18 { degree: 1 , mark: T , visited : 1 }
+ [child of 18]  39 { degree: 0 , mark: T , visited : 1 }
+ [right of 18]  38 { degree: 1 , mark: F , visited : 1 }
+ [child of 38]  41 { degree: 0 , mark: f , visited : 1 }
+ [right of 38]  52 { degree: 0 , mark: F , visited : 1 }
+ [right of 3]  7 { degree: 0 , mark: F , visited : 1 }
+ [right of 7]  23 { degree: 0 , mark: F , visited : 1 }
+ [right of 23]  21 { degree: 0 , mark: F , visited : 1 }
+ [right of 21]  17 { degree: 1 , mark: F , visited : 1 }
+ [child of 17]  30 { degree: 0 , mark: F , visited : 1 }
+ [right of 17]  24 { degree: 2 , mark: F , visited : 1 }
+ [child of 24]  26 { degree: 1 , mark: T , visited : 1 }
+ [child of 26]  35 { degree: 0 , mark: F , visited : 1 }
+ [right of 26]  46 { degree: 0 , mark: F , visited : 1 }
+
