@@ -268,7 +268,7 @@ NODE * ext_min(HEAP * m) {
 						printf ("adding node (val = %d) to root list \n", c->key);
 		                 
 		                 //extracting the min value//
-		                if (c->key <  m->min->key) 
+		                if ( m->min->key  > c->key) 
 		                	 m->min = c; 
 		                c->parent = NULL; 
 		                c = rgt; 
