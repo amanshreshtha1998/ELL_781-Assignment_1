@@ -377,7 +377,7 @@ void consolidate (HEAP * H)
 	int i;
 	int dMax,d;
 
-	dMax = degree(H->n);
+	dMax = (int)log2(H->n) + 1;
 
 	NODE * a[dMax], *x,*y,*temp;
 	printf("\nmax degree of a node in H is = %d \n", (dMax-1));
