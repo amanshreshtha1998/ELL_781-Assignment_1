@@ -339,12 +339,12 @@ NODE * ext_min(HEAP * m)
 		        c->parent = NULL; 
 
 		        //extracting the min value//
-		        if (c->key <  m->min->key) 
-		        	m->min = c; 
-		                 
-		        c = rgt; 
-
-		    } while (rgt != temp->child); 
+			     if (m->min->key > c->key )
+		                	 m->min = c;
+		                c->parent = NULL;
+		                c = rgt;
+		                y = temp->child
+		            } while (rgt != y );
 		} 
 
 		//extracting the Min Node from the heap//
@@ -353,14 +353,15 @@ NODE * ext_min(HEAP * m)
     	printf ("node (val = %d) removed from the heap \n", temp->key);
 
     	m->min = temp->right; 
-		if (temp == temp->right && temp->child == NULL) //if min is the only node//
-			m->min = NULL; 
-    	else 
-    	{ 
-    		m->min = temp->right;  //rearrange the tree//
+	if ( temp->child != NULL && temp != temp->right) //if min is the only node//
+			
+		m->min = temp->right;  //rearrange the tree//
 			printf ("node (val = %d) is the m->min now \n", m->min->key);
 	    	
 	    	consolidate(m); 
+    	else 
+    	{ 
+    		m->min = NULL; 
 	    } 
 	
 		nodesCount-=1; 
