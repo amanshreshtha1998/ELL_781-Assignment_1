@@ -311,7 +311,7 @@ NODE * ext_min(HEAP * m)
 	int nodesCount = m->n;
 	printf("heap is having %d nodes \n", nodesCount);
 
-	NODE *temp, *rgt;
+	NODE *temp, *rgt, *y;
 
 	if( m->min == NULL)
 		printf("Error ! The Heap Is Empty, cannot extarct the minimum.\n");
@@ -343,7 +343,7 @@ NODE * ext_min(HEAP * m)
 		                	 m->min = c;
 		                c->parent = NULL;
 		                c = rgt;
-		                y = temp->child
+		                y = temp->child;
 		            } while (rgt != y );
 		} 
 
@@ -354,11 +354,11 @@ NODE * ext_min(HEAP * m)
 
     	m->min = temp->right; 
 	if ( temp->child != NULL && temp != temp->right) //if min is the only node//
-			
+	{	
 		m->min = temp->right;  //rearrange the tree//
-			printf ("node (val = %d) is the m->min now \n", m->min->key);
-	    	
+		printf ("node (val = %d) is the m->min now \n", m->min->key);
 	    	consolidate(m); 
+	}
     	else 
     	{ 
     		m->min = NULL; 
