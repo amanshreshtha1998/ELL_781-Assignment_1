@@ -86,8 +86,8 @@ int main()
 	print_heap(my_heap->min);
 	printf("\n\n*************************************************** \n\n");
 
-	printf("Calling decrease key on node 45 \n");
-	decrease_key(my_heap,45,15);
+	printf("Calling decrease key on node 5 \n");
+	decrease_key(my_heap,5,1);
 
 	//printf("Printing mark of node of val 24 : %c\n",n->child->mark);
 
@@ -97,8 +97,8 @@ int main()
 
 	printf("minimum value is : %d\n",my_heap->min->key);	
 
-	printf("Calling decrease key on node 35 \n");
-	decrease_key(my_heap,35,5);
+	printf("Calling decrease key on node 7 \n");
+	decrease_key(my_heap,7,2);
 
 	printf("\n\n*************************************************** \n\n");
 	print_heap(my_heap->min);
