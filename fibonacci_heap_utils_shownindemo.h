@@ -64,11 +64,12 @@ NODE * create_dummy_node(int val)
 {
 	NODE * new_node;
 	new_node = malloc(sizeof(NODE));
+	NODE * temp = NULL;
 
 	new_node->left = new_node;
 	new_node->right = new_node;
-	new_node->parent = NULL;
-	new_node->child = NULL;
+	new_node->parent = temp;
+	new_node->child = temp;
 
 	new_node->key = val;
 
@@ -108,16 +109,7 @@ void insert( HEAP * H , int val )
 	NODE * new_node;
 	new_node = malloc(sizeof(NODE));
 
-	new_node->left = new_node;
-	new_node->right = new_node;
-	new_node->parent = NULL;
-	new_node->child = NULL;
-
-	new_node->key = val;
-
-	new_node->degree = 0;
-	new_node->mark = false;
-	new_node->visited = 0;  
+	new_node = create_dummy_node(val);
 
 
 	if( (H->min) == NULL ) // no node already added to the fibonacci heap
@@ -192,6 +184,12 @@ NODE * find_node(NODE * H_min , int val)
 {
 	NODE * ptr = H_min;
 
+	if(H_min == NULL)
+	{
+		printf("Heap is empty !");
+		return NULL;
+	}
+
 	ptr->visited = 1;
 
 	if( ptr->key == val )
@@ -249,17 +247,22 @@ void CUT( NODE* H_min , NODE * node , NODE * parent )
 void CASCADING_CUT(NODE * H_min , NODE * parent)
 {
 	NODE * parent_parent = parent->parent;
-
-	if(parent_parent != NULL)
+	
+	if(parent_parent == NULL)
 	{
-		if(parent->mark == false)
+
+	}	
+	
+	else
+	{
+		if(parent->mark == true)
+		{
+			CUT( H_min , parent , parent_parent );
+			CASCADING_CUT( H_min , parent_parent );	
+		}	
+		else
 		{
 			parent->mark = true;
-		}
-		else{
-
-			CUT( H_min , parent , parent_parent );
-			CASCADING_CUT( H_min , parent_parent );
 		}
 	}
 }
@@ -408,7 +411,7 @@ void consolidate (HEAP * H)
 				y = temp;
 			}
 
-			link_heaps (H,y,x);
+			link_heaps (H,x,y);
 
 			deg_array[d] = (NODE *)NULL;
 			d = d+1;
@@ -428,7 +431,11 @@ void consolidate (HEAP * H)
 
 	for ( int i=0 ; i<dMax ; i++) 
 	{ // checking a[i]
-		if (*(deg_array+i) != (NODE *)NULL)
+		if(*(deg_array+i) == (NODE *)NULL)
+		{
+
+		}
+		else
 		{ //adding a[i] to the root list
 			deg_array[i] -> right = deg_array[i];
 			deg_array[i] -> left = deg_array[i];
@@ -450,7 +457,7 @@ void consolidate (HEAP * H)
 	return;
 }
 
-void link_heaps(HEAP *H, NODE *y , NODE *x)
+void link_heaps(HEAP *H, NODE *x , NODE *y)
 {  
 	(y->left)->right = y->right;  // remove y from root list of H
   	(y->right)->left = y->left;
