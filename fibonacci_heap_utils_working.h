@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+#include<math.h>
 
 typedef struct node
 {
@@ -47,12 +48,6 @@ NODE * find_node(NODE * H_min , int val);
 
 void decrease_key(HEAP * H , int curr_val , int dec_val);
 // decrease the value of a node and reconfigure the heap
-
-void CUT( NODE* H_min , NODE * node , NODE * parent );
-void CASCADING_CUT(NODE * H_min , NODE * parent);
-
-int degree(int n);
-// calculates the maximum degree of a fib_heap with n nodes
 
 void link_heaps(HEAP *H, NODE *y , NODE *x);
 // remove heap with root node as y from the root list and add as a child to the node x
@@ -216,49 +211,6 @@ NODE * find_node(NODE * H_min , int val)
 	return x;
 }
 
-void decrease_key(HEAP * H , int curr_val , int dec_val)
-{
-	NODE * H_min = H->min;
-
-	if(H_min == NULL)
-	{
-		printf("Error!, The heap is empty\n");
-		return;
-	}
-
-	NODE * found_node = find_node(H_min , curr_val);
-
-	if( found_node == NULL )
-	{
-		printf("Error!, Node not found\n");
-		return;
-	}
-
-	if( found_node->key < dec_val )
-	{
-		printf("Error!, the new value is greater than previous value.\n");
-		return;
-	}
-
-	NODE * parent = found_node->parent;
-
-	found_node->key = dec_val;	// decrease the value of the node
-
-	if( parent != NULL && found_node->key < parent->key )
-	{
-		CUT(H_min , found_node , parent);
-		CASCADING_CUT(H_min , parent);
-	}
-
-	if(found_node->key < H->min->key)
-	{
-		H->min = found_node;
-	}
-	return;
-}
-
-
-
 void CUT( NODE* H_min , NODE * node , NODE * parent )
 {
 	if( node == node->right ) // node is the only child of parent
@@ -306,12 +258,54 @@ void CASCADING_CUT(NODE * H_min , NODE * parent)
 	}
 }
 
+void decrease_key(HEAP * H , int curr_val , int dec_val)
+{
+	NODE * H_min = H->min;
+
+	if(H_min == NULL)
+	{
+		printf("Error!, The heap is empty\n");
+		return;
+	}
+
+	NODE * found_node = find_node(H_min , curr_val);
+
+	if( found_node == NULL )
+	{
+		printf("Error! Cannot call decrease_key as node not found\n");
+		return;
+	}
+
+	if( found_node->key < dec_val )
+	{
+		printf("Error!, the new value is greater than previous value.\n");
+		return;
+	}
+
+	NODE * parent = found_node->parent;
+
+	found_node->key = dec_val;	// decrease the value of the node
+
+	if( parent != NULL && found_node->key < parent->key )
+	{
+		CUT(H_min , found_node , parent);
+		CASCADING_CUT(H_min , parent);
+	}
+
+	if(found_node->key < H->min->key)
+	{
+		H->min = found_node;
+	}
+	return;
+}
+
+
 NODE * ext_min(HEAP * m)
 {
 	int nodesCount = m->n;
 	printf("heap is having %d nodes \n", nodesCount);
 
-	NODE *temp, *rgt, *y;
+	NODE *extra, *rgt;
 
 	if( m->min == NULL)
 		printf("Error ! The Heap Is Empty, cannot extarct the minimum.\n");
@@ -319,14 +313,14 @@ NODE * ext_min(HEAP * m)
 	{
 		NODE *c =NULL;
 
-		temp=  m->min;
-		rgt = temp;
-		printf("extracted minimum is temp (val = %d)\n",temp->key);
+		extra =  m->min;
+		rgt = extra;
+		printf("extracted minimum is temp (val = %d)\n",extra->key);
 
 		//adding the child nodes to the root list//
-		if( temp->child !=NULL)
+		if( extra->child !=NULL)
 		{ 
-		    c = temp->child; 
+		    c = extra->child; 
 		    
 		    do 
 		    { 
@@ -339,29 +333,27 @@ NODE * ext_min(HEAP * m)
 		        c->parent = NULL; 
 
 		        //extracting the min value//
-			     if (m->min->key > c->key )
-		                	 m->min = c;
-		                c->parent = NULL;
-		                c = rgt;
-		                y = temp->child;
-		            } while (rgt != y );
+		        if (c->key <  m->min->key) 
+		        	m->min = c; 
+		                 
+		        c = rgt; 
+
+		    } while (rgt != extra->child); 
 		} 
 
 		//extracting the Min Node from the heap//
-    	(temp->right)->left = temp->left; 
-    	(temp->left)->right = temp->right; 
-    	printf ("node (val = %d) removed from the heap \n", temp->key);
+    	(extra->right)->left = extra->left; 
+    	(extra->left)->right = extra->right; 
 
-    	m->min = temp->right; 
-	if ( temp->child != NULL && temp != temp->right) //if min is the only node//
-	{	
-		m->min = temp->right;  //rearrange the tree//
-		printf ("node (val = %d) is the m->min now \n", m->min->key);
-	    	consolidate(m); 
-	}
+    	m->min = extra->right; 
+		if ( extra->child == NULL && extra == extra->right ) //if min is the only node//
+			m->min = NULL; 
     	else 
     	{ 
-    		m->min = NULL; 
+    		m->min = extra->right;  //rearrange the tree//
+			printf ("node (val = %d) is the m->min now \n", m->min->key);
+	    	
+	    	consolidate(m); 
 	    } 
 	
 		nodesCount-=1; 
@@ -369,7 +361,7 @@ NODE * ext_min(HEAP * m)
     	printf("heap is having %d nodes \n", nodesCount);
 	}
 
-	return temp; 
+	return extra; 
 } 
 
 void consolidate (HEAP * H)
@@ -377,14 +369,16 @@ void consolidate (HEAP * H)
 	int i;
 	int dMax,d;
 
-	dMax = (int)log2(H->n) + 1;
+	dMax = (int)log2(H->n)+1;
 
-	NODE * a[dMax], *x,*y,*temp;
+	//dMax = degree(H->n);
+
+	NODE * deg_array[dMax], *x,*y,*temp;
 	printf("\nmax degree of a node in H is = %d \n", (dMax-1));
  
 	for ( i=0 ; i<dMax ; i++)
 	{
-		a[i]= (NODE *) NULL;
+		deg_array[i]= (NODE *) NULL;
 	}
 
 	x = H->min;
@@ -396,9 +390,9 @@ void consolidate (HEAP * H)
 		d = x->degree ;
 		printf ("degree of node (val = %d) is (d = %d) \n", x->key, d);
 		
-		while(a[d]!=NULL && x->key != a[d]->key )
+		while(deg_array[d]!=NULL && x->key != deg_array[d]->key )
 		{
-			y = a[d];     
+			y = deg_array[d];     
 			printf ("found node with same degree(%d) having (val = %d) \n",d, y->key);
 
 			if (x->key > y->key)
@@ -410,11 +404,11 @@ void consolidate (HEAP * H)
 
 			link_heaps (H,y,x);
 
-			a[d] = (NODE *)NULL;
+			deg_array[d] = (NODE *)NULL;
 			d = d+1;
 		}
 	
-		a[d] = x;    //x is node having degree d
+		deg_array[d] = x;    //x is node having degree d
 
 		x = x->right;
 
@@ -428,37 +422,26 @@ void consolidate (HEAP * H)
 
 	for ( int i=0 ; i<dMax ; i++) 
 	{ // checking a[i]
-		if (*(a+i) != (NODE *)NULL)
+		if (*(deg_array+i) != (NODE *)NULL)
 		{ //adding a[i] to the root list
-			a[i] -> right = a[i];
-			a[i] -> left = a[i];
+			deg_array[i] -> right = deg_array[i];
+			deg_array[i] -> left = deg_array[i];
 
 			if(H->min != (NODE *)NULL)
 			{
-				add_node(H->min , a[i]);
+				add_node(H->min , deg_array[i]);
 
-				if( a[i]->key < H->min->key )
-				H->min = a[i]; //updating H->min
+				if( deg_array[i]->key < H->min->key )
+				H->min = deg_array[i]; //updating H->min
 			}
 			else
 			{
-				H->min = a[i];
+				H->min = deg_array[i];
 			}
 		}
 	}
 	
 	return;
-}
-
-int degree(int n)
-{
-	int deg=0;
-	while(n>0)
-	{	
-		n=n/2;
-		deg++;
-	}
-	return deg;
 }
 
 void link_heaps(HEAP *H, NODE *y , NODE *x)
@@ -480,3 +463,5 @@ void link_heaps(HEAP *H, NODE *y , NODE *x)
   	x->degree++;
   	y->mark = false;
 }
+
+

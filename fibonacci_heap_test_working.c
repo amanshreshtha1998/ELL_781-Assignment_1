@@ -72,8 +72,10 @@ int main()
 
 	printf("number of nodes in my_heap is %d \n", my_heap->n);
 	printf("\n");
+
+	insert(my_heap,21);
 	
-	printf ("calling extract_min on H \n\n");
+	printf ("calling extract_min on heap \n\n");
 	ext_min(my_heap);
 
 	printf("\nextract min done \n");
@@ -82,8 +84,8 @@ int main()
 	print_heap(my_heap->min);
 	printf("\n\n*************************************************** \n\n");
 
-	printf("Calling decrease key on node 46 \n");
-	decrease_key(my_heap,46,15);
+	printf("Calling decrease key on node 45 \n");
+	decrease_key(my_heap,45,15);
 
 	//printf("Printing mark of node of val 24 : %c\n",n->child->mark);
 
