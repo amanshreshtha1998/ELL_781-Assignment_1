@@ -1,0 +1,91 @@
+Making a new fibonacci heap !
+Enter number of root list elements.
+3
+Error!, The heap is empty
+1
+Adding the first node ( val = 1 ) to an empty fibonacci heap !
+5
+Adding a new node ( val = 5 ) to the fibonacci heap in the root list !
+-6
+Adding a new node ( val = -6 ) to the fibonacci heap in the root list !
+Enter number of non-root list elements. 
+1
+5
+0
+7
+0
+
+
+*************************************************** 
+
+  -->  -6 	{ degree : 0 , mark : 0 }
+[right of -6]  -->  1 	{ degree : 0 , mark : 0 }
+[right of 1]  -->  5 	{ degree : 1 , mark : 0 }
+[child of 5]  -->  7 	{ degree : 0 , mark : 0 }
+
+
+*************************************************** 
+
+number of nodes in my_heap is 4 
+
+Adding a new node ( val = 21 ) to the fibonacci heap in the root list !
+calling extract_min on heap 
+
+heap is having 5 nodes 
+extracted minimum is temp (val = -6)
+node (val = 1) is the m->min now 
+
+max degree of a node in H is = 2 
+visiting node (val = 1) 
+degree of node (val = 1) is (d = 0) 
+visiting node (val = 5) 
+degree of node (val = 5) is (d = 1) 
+visiting node (val = 21) 
+degree of node (val = 21) is (d = 0) 
+found node with same degree(0) having (val = 1) 
+found node with same degree(1) having (val = 5) 
+visited all nodes in the root list 
+heap is having 4 nodes 
+
+extract min done 
+
+
+*************************************************** 
+
+  -->  1 	{ degree : 2 , mark : 0 }
+[child of 1]  -->  21 	{ degree : 0 , mark : 0 }
+[right of 21]  -->  5 	{ degree : 1 , mark : 0 }
+[child of 5]  -->  7 	{ degree : 0 , mark : 0 }
+
+
+*************************************************** 
+
+Calling decrease key on node 5 
+
+
+*************************************************** 
+
+  -->  1 	{ degree : 2 , mark : 0 }
+[child of 1]  -->  21 	{ degree : 0 , mark : 0 }
+[right of 21]  -->  1 	{ degree : 1 , mark : 0 }
+[child of 1]  -->  7 	{ degree : 0 , mark : 0 }
+
+
+*************************************************** 
+
+minimum value is : 1
+Calling decrease key on node 7 
+
+
+*************************************************** 
+
+  -->  1 	{ degree : 2 , mark : 0 }
+[child of 1]  -->  21 	{ degree : 0 , mark : 0 }
+[right of 21]  -->  1 	{ degree : 1 , mark : 0 }
+[child of 1]  -->  2 	{ degree : 0 , mark : 0 }
+
+
+*************************************************** 
+
+minimum value is : 1
+
